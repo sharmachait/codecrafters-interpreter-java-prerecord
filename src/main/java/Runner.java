@@ -1,5 +1,4 @@
-import lexicon.LoxScanner;
-import lexicon.ScanException;
+import lexicon.Lexer;
 import lexicon.Token;
 
 import java.io.IOException;
@@ -18,16 +17,9 @@ public class Runner {
         }
 
         if (!fileContents.isEmpty()) {
-            LoxScanner scanner = new LoxScanner(fileContents);
-            List<Token> tokens ;
-            try{
-                tokens = scanner.scan();
-
-            } catch (ScanException e) {
-                System.out.println(e.getMessage());
-                return;
-            }
-            for(Token token: tokens){
+            Lexer lexer = new Lexer(fileContents);
+            List<Token> tokens = lexer.scan();
+            for(Token token : tokens){
                 System.out.println(token);
             }
         } else {

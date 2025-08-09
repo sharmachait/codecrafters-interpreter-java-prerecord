@@ -1,9 +1,9 @@
 package lexicon;
 
 public class Token {
-    public final TokenType type;
-    public final String lexeme;
-    public final Object literal;
+    private final TokenType type;
+    private final String lexeme;
+    private final Object literal;
     public final Integer line;
 
     public Token(TokenType type, String lexeme, Object literal, Integer line) {
@@ -12,6 +12,7 @@ public class Token {
         this.literal = literal;
         this.line = line;
     }
+    @Override
     public String toString(){
         return type+" "+lexeme+" "+literal;
     }
