@@ -40,8 +40,10 @@ public class LoxScanner {
         switch (c){
             case '(':
                 addToken(TokenType.LEFT_PAREN, null);
+                break;
             case ')':
                 addToken(TokenType.RIGHT_PAREN, null);
+                break;
         }
     }
 }
