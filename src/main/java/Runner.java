@@ -12,7 +12,6 @@ public class Runner {
         String fileContents = "";
         try {
             fileContents = Files.readString(Path.of(filename));
-            System.out.println(fileContents);
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
             System.exit(1);
