@@ -23,11 +23,14 @@ public class Runner {
             List<Token> tokens ;
             try{
                 tokens = scanner.scan();
+
             } catch (ScanException e) {
                 System.out.println(e.getMessage());
                 return;
             }
-            System.out.println(tokens);
+            for(Token token: tokens){
+                System.out.println(token);
+            }
         } else {
             System.out.println("EOF  null");
         }
