@@ -20,12 +20,11 @@ public class Runner {
         if (!fileContents.isEmpty()) {
             Lexer lexer = new Lexer(fileContents);
             Lexer.Result result = lexer.scan();
-            if(result.e!=null){
-                System.out.println("EOF  null");
-                System.exit(65);
-            }
             for(Token token : result.tokens){
                 System.out.println(token);
+            }
+            if(result.e!=null){
+                System.exit(65);
             }
         } else {
             System.out.println("EOF  null");
