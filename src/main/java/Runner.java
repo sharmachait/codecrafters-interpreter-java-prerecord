@@ -25,7 +25,7 @@ public class Runner {
                     System.out.println(token);
                 }
             } catch (ScanException e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
                 System.exit(65);
             }
         } else {
