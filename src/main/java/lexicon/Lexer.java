@@ -25,7 +25,7 @@ public class Lexer {
 // for
 //    s
 //    c
-    public List<Token> scan() {
+    public List<Token> scan() throws ScanException{
 
         while(curr < source.length()) {
             char current = getCurrMoveNext();
@@ -37,7 +37,7 @@ public class Lexer {
         return tokens;
     }
 
-    private void handleToken(char current) {
+    private void handleToken(char current) throws ScanException {
         switch (current){
             case '(':
                 addToken(LEFT_PAREN, null);
@@ -80,6 +80,8 @@ public class Lexer {
                 // not really a single character token may be 2
                 addToken(SLASH, null);
                 break;
+            default:
+                throw new ScanException("[line "+line+"] Error: Unexpected character: " + current);
         }
     }
 }
