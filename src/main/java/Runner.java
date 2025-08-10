@@ -18,16 +18,14 @@ public class Runner {
         }
 
         if (!fileContents.isEmpty()) {
-            try{
-                Lexer lexer = new Lexer(fileContents);
-                List<Token> tokens = lexer.scan();
-                for(Token token : tokens){
-                    System.out.println(token);
-                }
-            } catch (ScanException e) {
-                System.err.println(e.getMessage());
+            Lexer lexer = new Lexer(fileContents);
+            Lexer.Result result = lexer.scan();
+            if(result.e!=null){
                 System.out.println("EOF  null");
                 System.exit(65);
+            }
+            for(Token token : result.tokens){
+                System.out.println(token);
             }
         } else {
             System.out.println("EOF  null");

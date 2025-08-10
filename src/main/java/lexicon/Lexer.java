@@ -25,19 +25,28 @@ public class Lexer {
 // for
 //    s
 //    c
-    public List<Token> scan() throws ScanException{
+    public static class Result{
+    public Result(List<Token> tokens, ScanException e) {
+        this.tokens = tokens;
+        this.e = e;
+    }
 
+    public final List<Token> tokens;
+        public final ScanException e;
+    }
+    public Result scan() {
+        ScanException e = null;
         while(curr < source.length()) {
             char current = getCurrMoveNext();
-            handleToken(current);
+            e = handleToken(current);
             start = curr;
         }
 
         addToken(EOF, null);
-        return tokens;
+        return new Result(tokens, e);
     }
 
-    private void handleToken(char current) throws ScanException {
+    private ScanException handleToken(char current){
         switch (current){
             case '(':
                 addToken(LEFT_PAREN, null);
@@ -81,7 +90,10 @@ public class Lexer {
                 addToken(SLASH, null);
                 break;
             default:
-                throw new ScanException("[line "+line+"] Error: Unexpected character: " + current);
+                ScanException e = new ScanException("[line "+line+"] Error: Unexpected character: " + current);
+                System.err.println(e.getMessage());
+                return e;
         }
+        return null;
     }
 }
