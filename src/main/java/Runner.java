@@ -26,6 +26,7 @@ public class Runner {
                 }
             } catch (ScanException e) {
                 System.out.println(e.getMessage());
+                System.exit(65);
             }
         } else {
             System.out.println("EOF  null");
