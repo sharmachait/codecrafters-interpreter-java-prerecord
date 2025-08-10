@@ -38,7 +38,10 @@ public class Lexer {
         ScanException e = null;
         while(curr < source.length()) {
             char current = getCurrMoveNext();
-            e = handleToken(current);
+            ScanException currentCharError = handleToken(current);
+            if(e == null){
+                e = currentCharError;
+            }
             start = curr;
         }
 
