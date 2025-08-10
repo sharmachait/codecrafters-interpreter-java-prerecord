@@ -1,6 +1,8 @@
 package lexicon;
 
 public enum TokenType {
+
+    //single character tokens
     LEFT_PAREN,
     RIGHT_PAREN,
     EOF,
@@ -11,18 +13,24 @@ public enum TokenType {
     MINUS,
     PLUS,
     SEMICOLON,
-    SLASH,
     STAR,
     COLON,
     QUESTION,
+
+    // maybe single or double
+    SLASH,
     BANG,
-    BANG_EQUAL,
     EQUAL,
-    EQUAL_EQUAL,
     GREATER,
-    GREATER_EQUAL,
     LESS,
+
+    // double character tokens
+    BANG_EQUAL,
+    EQUAL_EQUAL,
+    GREATER_EQUAL,
     LESS_EQUAL,
+
+    // multi character tokens
     IDENTIFIER,
     STRING,
     NUMBER,
