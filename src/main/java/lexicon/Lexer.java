@@ -51,6 +51,35 @@ public class Lexer {
             case '}':
                 addToken(RIGHT_BRACE, null);
                 break;
+            case ',':
+                addToken(COMMA, null);
+                break;
+            case '.':
+                addToken(DOT, null);
+                break;
+            case '-':
+                addToken(MINUS, null);
+                break;
+            case '+':
+                addToken(PLUS, null);
+                break;
+            case ';':
+                addToken(SEMICOLON, null);
+                break;
+            case '*':
+                addToken(STAR, null);
+                break;
+            case ':':
+                addToken(COLON, null);
+                break;
+            case '?':
+                addToken(QUESTION, null);
+                break;
+
+            case '/':
+                // not really a single character token may be 2
+                addToken(SLASH, null);
+                break;
         }
     }
 }
