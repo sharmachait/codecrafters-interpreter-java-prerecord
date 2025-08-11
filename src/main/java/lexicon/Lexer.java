@@ -10,12 +10,15 @@ public class Lexer {
         source = fileContents;
     }
     private char getCurrMoveNext(){
-        assert curr < source.length();
         return source.charAt(curr++);
     }
     private Character getNext(){
-        assert curr< source.length();
         return source.charAt(curr);
+    }
+    private Character getNextNext(){
+        int next = curr+1;
+        if(next >= source.length()) return '\0';
+        return source.charAt(next);
     }
 
     private int line = 1;
@@ -91,13 +94,8 @@ public class Lexer {
             case '?':
                 addToken(QUESTION, null);
                 break;
-            case '=', '!', '<', '>':
-                handleMaybeDualCharacterToken(current); // concept of Maximum Munch, not associativity
-                break;
-            case '/':
-                // not really a single character token may be 2
-                addToken(SLASH, null);
-                break;
+            case '=', '!', '<', '>', '/':
+                return handleMaybeDualCharacterToken(current); // concept of Maximum Munch, not associativity
             default:
                 ScanException e = new ScanException("[line "+line+"] Error: Unexpected character: " + current);
                 System.err.println(e.getMessage());
@@ -106,15 +104,12 @@ public class Lexer {
         return null;
     }
 
-    private void handleMaybeDualCharacterToken(Character c) throws RuntimeException {
-        Character next;
-        if(curr >= source.length()) next = null;
-        // i like this way of coding, if somebody tries to get the next character, but next is not there we should crash
-        // this forces null check to be written near the business logic and i like that better
-        else next = getNext();
+    private ScanException handleMaybeDualCharacterToken(Character c) throws RuntimeException {
+        ScanException e = null;
+        Character next = getNext();
         switch (c){
             case '=':
-                if(next==null || next != '=') {
+                if(next != '='){
                     addToken(EQUAL, null);
                 }else{
                     curr++;
@@ -122,7 +117,7 @@ public class Lexer {
                 }
                 break;
             case '!':
-                if(next==null || next != '='){
+                if(next != '='){
                     addToken(BANG, null);
                 }
                 else {
@@ -131,7 +126,7 @@ public class Lexer {
                 }
                 break;
             case '<':
-                if(next==null || next != '='){
+                if(next != '='){
                     addToken(LESS, null);
                 }
                 else {
@@ -140,7 +135,7 @@ public class Lexer {
                 }
                 break;
             case '>':
-                if(next==null || next != '='){
+                if(next != '='){
                     addToken(GREATER, null);
                 }
                 else {
@@ -148,9 +143,41 @@ public class Lexer {
                     addToken(GREATER_EQUAL, null);
                 }
                 break;
+            case '/':
+                if(next != '*' && next != '/'){
+                    addToken(SLASH, null);
+                }
+                else {
+                    curr++;
+                    if(next == '/') {
+                        discardLine();
+                    }else {
+                        e = discardMultiLine();
+                    }
+                }
+                break;
             default:
                 throw new RuntimeException("Invalid character passed in to be checked for dual character token");
         }
+        return e;
+    }
 
+    private void discardLine() {
+        while(curr < source.length() && getNext() != '\n')
+            getCurrMoveNext();
+    }
+    private ScanException discardMultiLine() {
+        while(curr < source.length() && !(getNext() == '*' && getNextNext() == '/')) {
+            if(getNext() == '\n') line++;
+            getCurrMoveNext();
+        }
+        if(curr >= source.length()){
+            ScanException e = new ScanException("[line "+line+"] Error: Unterminated multiline comment.");
+            System.err.println(e.getMessage());
+            return e;
+        }
+        getCurrMoveNext();//'*'
+        getCurrMoveNext();//'/'
+        return null;
     }
 }
