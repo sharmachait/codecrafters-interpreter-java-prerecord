@@ -141,7 +141,7 @@ public class Lexer {
                 break;
             case '>':
                 if(next==null || next != '='){
-                    addToken(EQUAL, null);
+                    addToken(GREATER, null);
                 }
                 else {
                     curr++;
