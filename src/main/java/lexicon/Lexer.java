@@ -13,11 +13,12 @@ public class Lexer {
         return source.charAt(curr++);
     }
     private Character getNext(){
+        if(curr == source.length()) return null;
         return source.charAt(curr);
     }
     private Character getNextNext(){
         int next = curr+1;
-        if(next >= source.length()) return '\0';
+        if(next >= source.length()) return null;
         return source.charAt(next);
     }
 
@@ -109,7 +110,7 @@ public class Lexer {
         Character next = getNext();
         switch (c){
             case '=':
-                if(next != '='){
+                if(next == null || next != '='){
                     addToken(EQUAL, null);
                 }else{
                     curr++;
@@ -117,7 +118,7 @@ public class Lexer {
                 }
                 break;
             case '!':
-                if(next != '='){
+                if(next == null || next != '='){
                     addToken(BANG, null);
                 }
                 else {
@@ -126,7 +127,7 @@ public class Lexer {
                 }
                 break;
             case '<':
-                if(next != '='){
+                if(next == null || next != '='){
                     addToken(LESS, null);
                 }
                 else {
@@ -135,7 +136,7 @@ public class Lexer {
                 }
                 break;
             case '>':
-                if(next != '='){
+                if(next == null || next != '='){
                     addToken(GREATER, null);
                 }
                 else {
@@ -144,7 +145,7 @@ public class Lexer {
                 }
                 break;
             case '/':
-                if(next != '*' && next != '/'){
+                if(next == null || (next != '*' && next != '/')){
                     addToken(SLASH, null);
                 }
                 else {
@@ -167,7 +168,7 @@ public class Lexer {
             getCurrMoveNext();
     }
     private ScanException discardMultiLine() {
-        while(curr < source.length() && !(getNext() == '*' && getNextNext() == '/')) {
+        while(curr < source.length() && curr+1 < source.length() && !(getNext() == '*' && getNextNext() == '/')) {
             if(getNext() == '\n') line++;
             getCurrMoveNext();
         }
@@ -177,6 +178,11 @@ public class Lexer {
             return e;
         }
         getCurrMoveNext();//'*'
+        if(curr+1 >= source.length()){
+            ScanException e = new ScanException("[line "+line+"] Error: Unterminated multiline comment.");
+            System.err.println(e.getMessage());
+            return e;
+        }
         getCurrMoveNext();//'/'
         return null;
     }
