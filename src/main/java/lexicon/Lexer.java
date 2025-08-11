@@ -6,38 +6,42 @@ import static lexicon.TokenType.*;
 
 public class Lexer {
     private final String source;
+    public Lexer(String fileContents) {
+        source = fileContents;
+    }
     private char getCurrMoveNext(){
         return source.charAt(curr++);
     }
+    private Character getNext(){
+        if(curr >= source.length()) return null;
+        return source.charAt(curr);
+    }
+
     private int line = 1;
     private int curr = 0;
-    private int start = 0; // (()
-                           // s
-                           //  c
+    private int start = 0;
+
     private final List<Token> tokens = new ArrayList<>();
     private void addToken(TokenType type, Object literal) {
         String lexeme = source.substring(start,curr);
         tokens.add(new Token(type, lexeme, literal, line));
     }
-    public Lexer(String fileContents) {
-        source = fileContents;
-    }
-// for
-//    s
-//    c
-    public static class Result{
-    public Result(List<Token> tokens, ScanException e) {
-        this.tokens = tokens;
-        this.e = e;
-    }
 
-    public final List<Token> tokens;
+    public static class Result{
+        public Result(List<Token> tokens, ScanException e) {
+            this.tokens = tokens;
+            this.e = e;
+        }
+
+        public final List<Token> tokens;
         public final ScanException e;
     }
+
     public Result scan() {
         ScanException e = null;
         while(curr < source.length()) {
             char current = getCurrMoveNext();
+
             ScanException currentCharError = handleToken(current);
             if(e == null){
                 e = currentCharError;
@@ -49,8 +53,8 @@ public class Lexer {
         return new Result(tokens, e);
     }
 
-    private ScanException handleToken(char current){
-        switch (current){
+    private ScanException handleToken(char current) {
+        switch (current) {
             case '(':
                 addToken(LEFT_PAREN, null);
                 break;
@@ -87,6 +91,9 @@ public class Lexer {
             case '?':
                 addToken(QUESTION, null);
                 break;
+            case '=':
+                handleMaybeDualCharacterToken(current); // concept of Maximum Munch, not associativity
+                break;
 
             case '/':
                 // not really a single character token may be 2
@@ -98,5 +105,24 @@ public class Lexer {
                 return e;
         }
         return null;
+    }
+
+    private void handleMaybeDualCharacterToken(char c) throws RuntimeException {
+        Character next = getNext();
+        switch (c){
+            case '=':
+                if(next == null)
+                    addToken(EQUAL, null);
+                else if(next == c) {
+                    curr++;
+                    addToken(EQUAL_EQUAL, null);
+                }else{
+                    addToken(EQUAL, null);
+                }
+                break;
+            default:
+                throw new RuntimeException("Invalid character passed in to be checked for dual character token");
+        }
+
     }
 }
