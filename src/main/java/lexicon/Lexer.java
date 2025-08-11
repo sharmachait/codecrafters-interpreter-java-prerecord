@@ -91,10 +91,9 @@ public class Lexer {
             case '?':
                 addToken(QUESTION, null);
                 break;
-            case '=':
+            case '=', '!':
                 handleMaybeDualCharacterToken(current); // concept of Maximum Munch, not associativity
                 break;
-
             case '/':
                 // not really a single character token may be 2
                 addToken(SLASH, null);
@@ -115,11 +114,20 @@ public class Lexer {
         else next = getNext();
         switch (c){
             case '=':
-                if(c == next) {
+                if(next==null || next != '=') {
+                    addToken(EQUAL, null);
+                }else{
                     curr++;
                     addToken(EQUAL_EQUAL, null);
-                }else{
-                    addToken(EQUAL, null);
+                }
+                break;
+            case '!':
+                if(next==null || next != '='){
+                    addToken(BANG, null);
+                }
+                else {
+                    curr++;
+                    addToken(BANG_EQUAL, null);
                 }
                 break;
             default:
