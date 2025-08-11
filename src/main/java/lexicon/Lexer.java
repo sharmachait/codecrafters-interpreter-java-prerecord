@@ -10,10 +10,11 @@ public class Lexer {
         source = fileContents;
     }
     private char getCurrMoveNext(){
+        assert curr < source.length();
         return source.charAt(curr++);
     }
     private Character getNext(){
-        if(curr >= source.length()) return null;
+        assert curr< source.length();
         return source.charAt(curr);
     }
 
@@ -41,7 +42,6 @@ public class Lexer {
         ScanException e = null;
         while(curr < source.length()) {
             char current = getCurrMoveNext();
-
             ScanException currentCharError = handleToken(current);
             if(e == null){
                 e = currentCharError;
@@ -107,13 +107,15 @@ public class Lexer {
         return null;
     }
 
-    private void handleMaybeDualCharacterToken(char c) throws RuntimeException {
-        Character next = getNext();
+    private void handleMaybeDualCharacterToken(Character c) throws RuntimeException {
+        Character next;
+        if(curr >= source.length()) next = null;
+        // i like this way of coding, if somebody tries to get the next character, but next is not there we should crash
+        // this forces null check to be written near the business logic and i like that better
+        else next = getNext();
         switch (c){
             case '=':
-                if(next == null)
-                    addToken(EQUAL, null);
-                else if(next == c) {
+                if(c == next) {
                     curr++;
                     addToken(EQUAL_EQUAL, null);
                 }else{
