@@ -97,6 +97,11 @@ public class Lexer {
                 break;
             case '=', '!', '<', '>', '/':
                 return handleMaybeDualCharacterToken(current); // concept of Maximum Munch, not associativity
+            case ' ', '\r', '\t':
+                break;
+            case '\n':
+                line++;
+                break;
             default:
                 ScanException e = new ScanException("[line "+line+"] Error: Unexpected character: " + current);
                 System.err.println(e.getMessage());
