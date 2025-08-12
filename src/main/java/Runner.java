@@ -1,5 +1,4 @@
 import lexicon.Lexer;
-import lexicon.ScanException;
 import lexicon.Token;
 
 import java.io.IOException;
@@ -17,17 +16,18 @@ public class Runner {
             System.exit(1);
         }
 
-        if (!fileContents.isEmpty()) {
-            Lexer lexer = new Lexer(fileContents);
-            Lexer.Result result = lexer.scan();
-            for(Token token : result.tokens){
-                System.out.println(token);
-            }
-            if(result.e!=null){
-                System.exit(65);
-            }
-        } else {
+        if(fileContents.isEmpty()){
             System.out.println("EOF  null");
+            return;
+        }
+
+        Lexer lexer = new Lexer(fileContents);
+        Lexer.Result result = lexer.scan();
+        for(Token token : result.tokens){
+            System.out.println(token);
+        }
+        if(result.exception != null) {
+            System.exit(65);
         }
     }
 }
