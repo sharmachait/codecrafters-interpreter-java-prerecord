@@ -128,7 +128,7 @@ public class Lexer {
             getCurrMoveNext();
         }
         if(curr >= source.length()){
-            ScanException e = new ScanException("[line "+line+ "] Unterminated string: "+source.substring(start,source.length())+" .");
+            ScanException e = new ScanException("[line "+line+ "] Unterminated string.");
             return e;
         }
         // curr must necessarily be at "
