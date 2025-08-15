@@ -107,11 +107,34 @@ public class Lexer {
                     return dualCharError;
                 }
                 break;
+            case '"':
+                ScanException stringException = string();
+                if(stringException!=null) {
+                    System.err.println(stringException.getMessage());
+                    return stringException;
+                }
+                break;
             default:
                 ScanException e = new ScanException("[line "+line+"] Error: Unexpected character: "+current);
                 System.err.println(e.getMessage());
                 return e;
         }
+        return null;
+    }
+
+    private ScanException string() {
+        while(curr<source.length() && getNext() != '"'){
+            if(getNext() == '\n') line++; // we support multi line strings
+            getCurrMoveNext();
+        }
+        if(curr >= source.length()){
+            ScanException e = new ScanException("[line "+line+ "] Unterminated string: "+source.substring(start,source.length())+" .");
+            return e;
+        }
+        // curr must necessarily be at "
+        getCurrMoveNext();
+        String value = source.substring(start+1, curr-1);
+        addToken(STRING, value);
         return null;
     }
 
