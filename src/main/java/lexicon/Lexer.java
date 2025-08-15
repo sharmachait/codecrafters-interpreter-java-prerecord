@@ -129,7 +129,8 @@ public class Lexer {
             getCurrMoveNext();
         }
         String text = source.substring(start,curr);
-        addToken(IDENTIFIER, null);
+        TokenType type = Keywords.keywords.getOrDefault(text, IDENTIFIER);
+        addToken(type, null);
     }
 
     private void number() {
