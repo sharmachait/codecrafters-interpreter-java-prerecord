@@ -107,11 +107,21 @@ public class Lexer {
             default:
                 if(Character.isDigit(current)){
                     number();
-                } else{
+                } else if(Character.isAlphabetic(current)){
+                    identifier();
+                }else{
                     return new ScanException("[line "+line+"] Error: Unexpected character: "+current);
                 }
         }
         return null;
+    }
+
+    private void identifier() {
+        while(curr < source.length() && Character.isAlphabetic(getCurr())){
+            getCurrMoveNext();
+        }
+        String text = source.substring(start,curr);
+        addToken(IDENTIFIER, null);
     }
 
     private void number() {
