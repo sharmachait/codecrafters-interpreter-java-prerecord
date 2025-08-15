@@ -12,11 +12,11 @@ public class Lexer {
     private char getCurrMoveNext(){
         return source.charAt(curr++);
     }
-    private Character getNext() {
+    private Character getCurr() {
         if(curr >= source.length()) return null;
         return source.charAt(curr);
     }
-    private Character getNextNext() {
+    private Character getNext() {
         int next = curr+1;
         if(next >= source.length()) return null;
         return source.charAt(next);
@@ -101,30 +101,32 @@ public class Lexer {
                 line++;
                 break;
             case '=', '!', '<', '>', '/':
-                ScanException dualCharError = handleDualCharacterTokens(current);
-                if(dualCharError!=null) {
-                    System.err.println(dualCharError.getMessage());
-                    return dualCharError;
-                }
-                break;
+                return handleDualCharacterTokens(current);
             case '"':
-                ScanException stringException = string();
-                if(stringException!=null) {
-                    System.err.println(stringException.getMessage());
-                    return stringException;
-                }
-                break;
+                return string();
             default:
-                ScanException e = new ScanException("[line "+line+"] Error: Unexpected character: "+current);
-                System.err.println(e.getMessage());
-                return e;
+                if(Character.isDigit(current)){
+                    number();
+                } else{
+                    return new ScanException("[line "+line+"] Error: Unexpected character: "+current);
+                }
         }
         return null;
     }
 
+    private void number() {
+        while(curr < source.length() && Character.isDigit(getCurr())) getCurrMoveNext();
+
+        if(curr < source.length() && getCurr()=='.' && curr+1 < source.length() && Character.isDigit(getNext())){
+            getCurrMoveNext();
+            while(curr < source.length() && Character.isDigit(getCurr())) getCurrMoveNext();
+        }
+        addToken(NUMBER, Double.parseDouble(source.substring(start,curr)));
+    }
+
     private ScanException string() {
-        while(curr<source.length() && getNext() != '"'){
-            if(getNext() == '\n') line++; // we support multi line strings
+        while(curr<source.length() && getCurr() != '"'){
+            if(getCurr() == '\n') line++; // we support multi line strings
             getCurrMoveNext();
         }
         if(curr >= source.length()){
@@ -140,7 +142,7 @@ public class Lexer {
 
     private ScanException handleDualCharacterTokens(char current) {
         ScanException e = null;
-        Character next = getNext();
+        Character next = getCurr();
         switch (current){
             case '=':
                 if(next == null || next!='='){
@@ -189,26 +191,24 @@ public class Lexer {
         return e;
     }
     private void discardLine() {
-        while(curr < source.length() && getNext() != '\n'){
+        while(curr < source.length() && getCurr() != '\n'){
             curr++;
         }
     }
     private ScanException discardMultipleLines() {
         while(curr < source.length() &&
                 curr+1 < source.length() &&
-                !(getNext() == '*' && getNextNext() == '/')
+                !(getCurr() == '*' && getNext() == '/')
         ){
-            if(getNext() == '\n') line++;
+            if(getCurr() == '\n') line++;
             curr++;
         }
         if(curr >= source.length()){
             ScanException e = new ScanException("[line "+line+"] Unterminated multi line comment.");
-            System.err.println(e.getMessage());
             return e;
         }
         if(curr+1 >= source.length()){
             ScanException e = new ScanException("[line "+line+"] Unterminated multi line comment.");
-            System.err.println(e.getMessage());
             return e;
         }
         curr++; // *
