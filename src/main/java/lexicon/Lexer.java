@@ -120,8 +120,12 @@ public class Lexer {
         return c == '_' || Character.isAlphabetic(c);
     }
 
+    public boolean isAlphaNumeric(char c){
+        return Character.isDigit(c) || isAlpha(c);
+    }
+
     private void identifier() {
-        while(curr < source.length() && isAlpha(getCurr())){
+        while(curr < source.length() && isAlphaNumeric(getCurr())){
             getCurrMoveNext();
         }
         String text = source.substring(start,curr);
