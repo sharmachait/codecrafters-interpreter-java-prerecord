@@ -107,7 +107,7 @@ public class Lexer {
             default:
                 if(Character.isDigit(current)){
                     number();
-                } else if(Character.isAlphabetic(current)){
+                } else if(isAlpha(current)){
                     identifier();
                 }else{
                     return new ScanException("[line "+line+"] Error: Unexpected character: "+current);
@@ -116,8 +116,12 @@ public class Lexer {
         return null;
     }
 
+    public boolean isAlpha(char c){
+        return c == '_' || Character.isAlphabetic(c);
+    }
+
     private void identifier() {
-        while(curr < source.length() && Character.isAlphabetic(getCurr())){
+        while(curr < source.length() && isAlpha(getCurr())){
             getCurrMoveNext();
         }
         String text = source.substring(start,curr);
